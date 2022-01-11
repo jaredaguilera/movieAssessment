@@ -1,0 +1,3 @@
+[submodule "config-server-repo"]
+	path = config-server-repo
+	url = https://github.com/jaredaguilera/config-server-repo.git

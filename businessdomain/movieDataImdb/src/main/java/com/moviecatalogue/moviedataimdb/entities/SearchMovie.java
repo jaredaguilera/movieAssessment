@@ -1,4 +1,4 @@
-package com.movie.get.entities;
+package com.moviecatalogue.moviedataimdb.entities;
 
 import java.util.List;
 

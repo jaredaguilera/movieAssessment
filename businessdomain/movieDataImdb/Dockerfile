@@ -2,8 +2,8 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 FROM openjdk:8-jdk-alpine
-RUN addgroup -S moviecatalogueparent && adduser -S admin -G moviecatalogueparent
-USER admin:moviecatalogueparent
+RUN addgroup -S moviecatalogue && adduser -S admin -G moviecatalogue
+USER admin:moviecatalogue
 VOLUME /tmp
 ARG JAR_FILE=target/*.jar
 ADD /${JAR_FILE} app.jar

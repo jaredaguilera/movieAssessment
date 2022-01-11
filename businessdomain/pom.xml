@@ -3,22 +3,22 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>com.moviecatalogueparent</groupId>
-	    <artifactId>movieCatalogueParent</artifactId>
-	    <version>1.0-SNAPSHOT</version>    
-        <relativePath>../movieCatalogueParent/pom.xml</relativePath>
+		 <groupId>com.moviecatalogue</groupId>
+		 <artifactId>moviecatalogueparent</artifactId>
+		 <version>1.0-SNAPSHOT</version>
     </parent> 
        
-    <groupId>com.moviecatalogueparent.businessdomain</groupId>
+    <groupId>com.moviecatalogue.businessdomain</groupId>
     <artifactId>businessdomain</artifactId>
     <packaging>pom</packaging>    
     
     <modules>
-        <module>movieDataImdb</module>
+        <module>moviedataimdb</module>
+        <module>movieassessment</module>
     </modules>
     
     
-    <properties>
+        <properties>
         <spring-cloud-dependencies.version>Hoxton.SR8</spring-cloud-dependencies.version>  
         <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>   
         <org.lombo.version>1.18.16</org.lombo.version>     
@@ -77,12 +77,15 @@
             <version>${java-validation.version}</version>
         </dependency>       
             
+        
+                    
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
-
+                
+       
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -108,5 +111,6 @@
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
         </dependency>
-    </dependencies>     
+    </dependencies>  
 </project>
+ 

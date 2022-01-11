@@ -5,72 +5,93 @@ services:
   #used for each service is its name: that’s why it’s possible to use eureka-discovery as the hostname.
   registry-discovery:
     container_name: id-eureka
-    image: moviecatalogueparent/microservice-docker-eurekaserver:latest
+    image: moviecatalogue/microservice-docker-eurekaserver:0.0.1-SNAPSHOT
     ports:
       - 8761:8761
     environment:
          - JAVA_OPTS=
          - Xms256M 
          - Xmx256M
+         
+ ##########################################################################     
+ #configuration service
+ ##########################################################################  
   configuration:
     container_name: id-config
-    image: moviecatalogueparent/microservice-docker-configserver:latest
+    image: moviecatalogue/microservice-docker-configserver:0.0.1-SNAPSHOT
     volumes:
       #this it use because we are using a local github repository /host/path:/container/path use ./ for relative path
-      - ./config-server-repo:/tmp/config-server
+      - ./config-server-repo:/tmp/config-server-repo
       #All projets will have a variable value  DEUREKA_SERVER this tell where find a registry-discovery server
     environment:
-         - JAVA_OPTS=
-         - Xms256M 
-         - Xmx256M
-         - EUREKA_SERVER=http://registry-discovery:8761/eureka
+         -JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+         -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+         -DLOCAL_REPOSITORY=/tmp/config-server-repo
          #-Dspring.cloud.config.server.native.searchLocations=/var/config-data
     depends_on:
       - registry-discovery
     ports:
-      - 8085:8085
+     - 8888:8888
+ 
+ ##########################################################################     
+ #administration service
+ ##########################################################################     
   administration:
     container_name: id-admin
-    image: moviecatalogueparent/microservice-docker-adminserver:latest   
+    image: moviecatalogue/microservice-docker-adminserver:0.0.1-SNAPSHOT
       #All projets will have a variable value  DEUREKA_SERVER this tell where find a registry-discovery server 
     environment:
-         - JAVA_OPTS=
-         - Xms256M 
-         - Xmx256M
-         - EUREKA_SERVER=http://registry-discovery:8761/eureka
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+         -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
          #-Dspring.cloud.config.server.native.searchLocations=/var/config-data
     depends_on:
       - registry-discovery
     ports:
-      - 8084:8084
+     - 8762:8762
+     
+ ##########################################################################     
+ #movie - assessment service
+ ##########################################################################  
   movie-assessment:
     container_name: movie-assessment
-    image: moviecatalogueparent/microservice-docker-movieassessment:latest
+    image: moviecatalogue/microservice-docker-movieassessment:0.0.1-SNAPSHOT
     environment:
-         - JAVA_OPTS=
-         - Xms256M 
-         - Xmx256M
-         - EUREKA_SERVER=http://registry-discovery:8761/eureka
-         - Dspring.profiles.active=development
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+         -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+         -Dspring.profiles.active=development
     depends_on:
       - registry-discovery
       - configuration
     ports:
       - 8081:8081
+      
+ ##########################################################################     
+ #movie-imdb service
+ ##########################################################################   
   movie-imdb:
     container_name: movie-imdb
-    image: moviecatalogueparent/microservice-docker-moviedataimdb:latest
+    image: moviecatalogue/microservice-docker-moviedataimdb:0.0.1-SNAPSHOT   
     environment:
-         - JAVA_OPTS=
-         - Xms256M 
-         - Xmx256M
-         - EUREKA_SERVER=http://registry-discovery:8761/eureka
-         - Dspring.profiles.active=development
+      - JAVA_OPTS=
+         -Xms256M 
+         -Xmx256M
+         -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
+         -Dspring.profiles.active=development
     depends_on:
       - registry-discovery
       - configuration
     ports:
-      - 8082:8082
+      - 8082:8082   
+     
+ ##########################################################################     
+ #database service
+ ##########################################################################       
   postgres_db:
     container_name: postgres
     image: postgres:latest
@@ -87,7 +108,10 @@ services:
         POSTGRES_PASSWORD: qwerty
         #main database if name is not specific thname of super user is use
         POSTGRES_DB: postgres  
-        
+
+ ##########################################################################     
+ #pgadmin service
+ ##########################################################################  
   pgadmin4:
     image: dpage/pgadmin4
     restart: always
@@ -97,6 +121,5 @@ services:
     ports:
       - 80:80
     depends_on:
-      - postgres_db         
-      
+      - postgres_db      
     

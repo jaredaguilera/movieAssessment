@@ -3,19 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-        <groupId>com.moviecatalogueparent</groupId>
-	    <artifactId>movieCatalogueParent</artifactId>
+	    <groupId>com.moviecatalogue</groupId>
+	    <artifactId>moviecatalogueparent</artifactId>
 	    <version>1.0-SNAPSHOT</version>
-        <relativePath>../movieCatalogueParent/pom.xml</relativePath>
     </parent>
     
-    <groupId>com.moviecatalogueparent.infraestructuradomain</groupId>
+    <groupId>com.moviecatalogue.infraestructuradomain</groupId>
     <artifactId>infraestructuradomain</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>configServer</module>
         <module>eureka</module>
         <module>adminServer</module>
+        <module>configServer</module>
     </modules>
     <properties>
         <spring-cloud-dependencies.version>Hoxton.SR8</spring-cloud-dependencies.version>

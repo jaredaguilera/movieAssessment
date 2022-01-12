@@ -1,10 +1,7 @@
-package com.moviecatalogue.moviedataimdb.entities;
+package com.moviecatalogue.assessment.dto;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Data;
-
 
 public class MovieResponse {
 

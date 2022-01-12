@@ -31,4 +31,3 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-apikeyimdbapi: 994dfc4c

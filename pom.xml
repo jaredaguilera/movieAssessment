@@ -104,12 +104,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
             <!--If want exclude junit4 and use only junit5-->
             <exclusions>
                 <exclusion>
@@ -161,7 +155,7 @@
                     </execution>
                 </executions>
                 <configuration>                       
-                    <repository>paymentchain/microservice-docker-${project.artifactId}</repository>
+                    <repository>moviecatalogue/microservice-docker-${project.artifactId}</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>

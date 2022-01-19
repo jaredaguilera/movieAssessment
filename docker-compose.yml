@@ -22,9 +22,9 @@ services:
     volumes:
       #this it use because we are using a local github repository /host/path:/container/path use ./ for relative path
       - ./config-server-repo:/tmp/config-server-repo
-      #All projets will have a variable value  DEUREKA_SERVER this tell where find a registry-discovery server
+      #All projets will have a variable value  DEUREKA_SERVER this tell where find a registry-discovery server 
     environment:
-         -JAVA_OPTS=
+      - JAVA_OPTS=
          -Xms256M 
          -Xmx256M
          -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
@@ -33,7 +33,7 @@ services:
     depends_on:
       - registry-discovery
     ports:
-     - 8888:8888
+      - 8888:8888
  
  ##########################################################################     
  #administration service

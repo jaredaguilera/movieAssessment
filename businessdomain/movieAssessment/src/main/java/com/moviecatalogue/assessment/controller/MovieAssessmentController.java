@@ -12,7 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.moviecatalogue.assessment.exception.BussinesRuleException;
 import com.moviecatalogue.assessment.service.MovieAssessmentService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
+@Api(tags = "Movie Assessment")
 @RestController
 @RequestMapping("/movieassessment")
 public class MovieAssessmentController {
@@ -21,16 +26,27 @@ public class MovieAssessmentController {
 	@Autowired
 	MovieAssessmentService assessmentService;
 	
-	
+    @ApiOperation(value = "Return all Assessment bundled into Response", notes = "Return 204 if no data found")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "There are not transactions"),
+        @ApiResponse(code = 500, message = "Internal error"),
+        @ApiResponse(code = 404, message = "Not Found Movie"),
+        @ApiResponse(code = 201, message = "Created")})
 	@PostMapping("/enteRating")
 	public ResponseEntity<?> post(@RequestParam String idMovie, @RequestParam long rating, @RequestParam long idUser) throws BussinesRuleException {
-		return ResponseEntity.ok(assessmentService.post(idMovie, rating, idUser));
+		return assessmentService.post(idMovie, rating, idUser);
 		
 	}
-	
+    
+    @ApiOperation(value = "Return all Assessment List", notes = "Return 204 if no data found")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "There are not transactions"),
+        @ApiResponse(code = 500, message = "Internal error"),
+        @ApiResponse(code = 404, message = "Not Found Movie"),
+        @ApiResponse(code = 201, message = "Created")})
 	@GetMapping("getTotalMoviesRated")
 	public ResponseEntity<?> list() {
-		return ResponseEntity.ok(assessmentService.list());
+		return assessmentService.list();
 	}
 
 	@GetMapping("getTotalMovies")

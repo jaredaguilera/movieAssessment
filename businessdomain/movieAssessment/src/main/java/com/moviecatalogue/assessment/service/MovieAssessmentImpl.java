@@ -9,12 +9,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moviecatalogue.assessment.common.InvoiceResponseMapper;
+import com.moviecatalogue.assessment.dto.AssessmentResponse;
+import com.moviecatalogue.assessment.dto.MovieImdbResponse;
 import com.moviecatalogue.assessment.dto.MovieResponse;
 import com.moviecatalogue.assessment.entities.Assessment;
 import com.moviecatalogue.assessment.entities.Movie;
@@ -39,6 +44,9 @@ public class MovieAssessmentImpl implements MovieAssessmentService{
 	@Autowired
 	MovieRepository movieRepository;
 	
+    @Autowired(required=true)
+    InvoiceResponseMapper irspm;
+	
 	public MovieAssessmentImpl(WebClient.Builder webClientBuilder) {
 		this.webClientBuilder = webClientBuilder;
 	}
@@ -51,41 +59,50 @@ public class MovieAssessmentImpl implements MovieAssessmentService{
 			});
 
 	@Override
-	public Assessment post(String idMovie, long rating, long idUser) throws BussinesRuleException {
+	public ResponseEntity<AssessmentResponse> post(String idMovie, long rating, long idUser) throws BussinesRuleException {
+		MovieImdbResponse movieResponse = new MovieImdbResponse();
+		AssessmentResponse InvoiceToInvoiceRespose = new AssessmentResponse();
+		try {
+			WebClient client = webClientBuilder.clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
+					.baseUrl("http://businessdomain-moviedataimdb/movieImdb")
+					.defaultHeaders(header -> header.setBasicAuth("admin", "admin"))
+					.defaultUriVariables(Collections.singletonMap("url", "http://businessdomain-moviedataimdb/movieImdb")).build();
+			JsonNode block = client
+					.method(HttpMethod.GET).uri(uriBuilder -> uriBuilder.path("/getIdParameter")
+							.queryParam("i", idMovie).queryParam("plot", "full").build())
+					.retrieve().bodyToMono(JsonNode.class).block();
+			ObjectMapper objectMapper = new ObjectMapper();
+	
+			movieResponse = objectMapper.convertValue(block, MovieImdbResponse.class);
 		
-		WebClient client = webClientBuilder.clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
-				.baseUrl("http://businessdomain-moviedataimdb/movieImdb")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-				.defaultUriVariables(Collections.singletonMap("url", "http://businessdomain-moviedataimdb/movieImdb")).build();
-		JsonNode block = client
-				.method(HttpMethod.GET).uri(uriBuilder -> uriBuilder.path("/getIdParameter")
-						.queryParam("i", idMovie).queryParam("plot", "full").build())
-				.retrieve().bodyToMono(JsonNode.class).block();
-		ObjectMapper objectMapper = new ObjectMapper();
-		MovieResponse movieResponse = new MovieResponse();
-		movieResponse = objectMapper.convertValue(block, MovieResponse.class);
-		
-		if(movieResponse != null && movieResponse.getResponse()) {
-			 BussinesRuleException exception = new BussinesRuleException("404", "No encontrada la pelicula", HttpStatus.NOT_FOUND);
-    		 throw exception;
+			if(movieResponse != null && !movieResponse.getResponse()) {
+				 BussinesRuleException exception = new BussinesRuleException("404", "No encontrada la pelicula", HttpStatus.NOT_FOUND);
+	    		 throw exception;
+			}
+			
+			Movie saveMovie = new Movie();
+			saveMovie.setNombre(movieResponse.getTitle());
+			saveMovie.setDescripcion(movieResponse.getPlot());
+			saveMovie.setUrl_imagen(movieResponse.getPoster());
+			Assessment saveAssessment = new Assessment();
+			saveAssessment.setMovie(saveMovie);
+			saveAssessment.setNota(rating);
+			saveAssessment.setId_usuario(idUser);
+			saveAssessment = assessmentRepository.save(saveAssessment);
+			InvoiceToInvoiceRespose = irspm.InvoiceToInvoiceAssessmentRespose(saveAssessment);
+			return ResponseEntity.ok(InvoiceToInvoiceRespose);
+		} catch (Exception e) {
+			BussinesRuleException exception = new BussinesRuleException("404", "No encontrada la pelicula", HttpStatus.NOT_FOUND);
 		}
 		
-		Movie saveMovie = new Movie();
-		saveMovie.setNombre(movieResponse.getTitle());
-		saveMovie.setDescripcion(movieResponse.getPlot());
-		saveMovie.setUrl_imagen(movieResponse.getPoster());
-		Assessment saveAssessment = new Assessment();
-		saveAssessment.setMovie(saveMovie);
-		saveAssessment.setNota(rating);
-		saveAssessment.setId_usuario(idUser);
-		saveAssessment = assessmentRepository.save(saveAssessment);
-
-		return saveAssessment;
+		return (ResponseEntity<AssessmentResponse>) ResponseEntity.notFound();
 	}
 	
 	@Override
-	public List<Assessment> list(){ 
-		return assessmentRepository.findAll();
+	public ResponseEntity<List<AssessmentResponse>> list(){ 
+		List<Assessment> list = assessmentRepository.findAll();
+	    List<AssessmentResponse> InvoiceListToInvoiceResposeList = irspm.InvoiceListToInvoiceAssessmentResposeList(list);
+	    return ResponseEntity.ok(InvoiceListToInvoiceResposeList);
 	}
 	
 	@Override

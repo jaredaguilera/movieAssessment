@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Movie implements Serializable {
@@ -23,20 +24,33 @@ public class Movie implements Serializable {
 	@Column( length = 100000 )
 	private String descripcion;
 	private String categoria;
+    @OneToOne(mappedBy = "movie")
+	private Assessment assessment;
 	
-	
-	public Movie() {
-		super();
-	}
-
-
-	public Movie(long id_pelicula, String nombre, String url_imagen, String descripcion, String categoria) {
+	public Movie(long id_pelicula, String nombre, String url_imagen, String descripcion, String categoria,
+			Assessment assessment) {
 		super();
 		this.id_pelicula = id_pelicula;
 		this.nombre = nombre;
 		this.url_imagen = url_imagen;
 		this.descripcion = descripcion;
 		this.categoria = categoria;
+		this.assessment = assessment;
+	}
+
+
+	public Movie() {
+		super();
+	}
+
+
+	public Assessment getAssessment() {
+		return assessment;
+	}
+
+
+	public void setAssessment(Assessment assessment) {
+		this.assessment = assessment;
 	}
 
 

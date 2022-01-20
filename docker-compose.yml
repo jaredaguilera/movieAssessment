@@ -64,10 +64,11 @@ services:
          -Xms256M 
          -Xmx256M
          -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
-         -Dspring.profiles.active=development
+         -DPROFILE=production
     depends_on:
       - registry-discovery
       - configuration
+      
     ports:
       - 8081:8081
       
@@ -82,7 +83,7 @@ services:
          -Xms256M 
          -Xmx256M
          -DEUREKA_SERVER=http://registry-discovery:8761/eureka/
-         -Dspring.profiles.active=development
+         -DPROFILE=production
     depends_on:
       - registry-discovery
       - configuration

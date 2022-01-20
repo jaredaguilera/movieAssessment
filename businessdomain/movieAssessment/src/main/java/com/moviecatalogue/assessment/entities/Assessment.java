@@ -2,11 +2,15 @@ package com.moviecatalogue.assessment.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Assessment implements Serializable {
@@ -18,7 +22,9 @@ public class Assessment implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id_valoracion;
-	@Column( length = 100000 )
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_pelicula")
 	private Movie movie;
 	private long id_usuario;
 	private long nota;
